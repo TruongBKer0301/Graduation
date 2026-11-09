@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lễ Tốt Nghiệp - Nguyễn Trọng Trường</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cormorant Garamond & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#d97706',
+                            600: '#b45309',
+                            DEFAULT: '#c5a880',
+                            light: '#e8dcce',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5a880;
+            border-radius: 4px;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fef08a 0%, #c5a880 50%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .envelope-flap {
+            transition: transform 1s ease-in-out;
+            transform-origin: top;
+        }
+        .open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen relative">
+
+    <!-- Background Audio (Synthesized ambient music via Web Audio API) -->
+    <div id="audio-controller" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-gold/40 text-gold px-4 py-2.5 rounded-full shadow-2xl transition-all hover:border-gold">
+        <button id="music-toggle" class="focus:outline-none flex items-center gap-2 text-sm font-medium">
+            <i id="music-icon" class="fa-solid fa-music animate-spin text-gold-400"></i>
+            <span id="music-status">Nhạc nền: Tắt</span>
+        </button>
+    </div>
+
+    <!-- Màn hình mở đầu (Envelope / Cover) -->
+    <div id="cover-screen" class="fixed inset-0 z-40 bg-slate-950 flex flex-col items-center justify-center p-4 transition-opacity duration-1000">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black opacity-90"></div>
+        
+        <div class="relative z-10 max-w-md w-full bg-slate-900/90 border border-gold/30 rounded-3xl p-8 text-center shadow-2xl backdrop-blur-xl transform transition-transform duration-700 hover:scale-[1.01]">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gold/10 border border-gold/40 flex items-center justify-center text-gold text-3xl shadow-inner">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            
+            <p class="text-gold tracking-widest text-xs uppercase mb-2 font-semibold">Thư Mời Trân Trọng</p>
+            <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Lễ Tốt Nghiệp</h1>
+            <p class="text-slate-300 font-serif italic text-lg mb-6">"Tốt nghiệp không phải là kết thúc, mà là khởi đầu cho một chặng đường mới..."</p>
+            
+            <div class="border-t border-b border-gold/20 py-4 my-6">
+                <p class="text-xs text-slate-400 uppercase">Trân trọng kính mời</p>
+                <p id="guest-name-display" class="text-gold-400 font-semibold text-lg mt-1">Quý Khách Thân Mến</p>
+            </div>
+
+            <button id="open-btn" class="w-full py-4 bg-gradient-to-r from-gold-600 via-gold-500 to-amber-600 hover:from-gold-500 hover:to-gold-400 text-slate-950 font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-envelope-open-text"></i> Mở Thiệp Mời
+            </button>
+            <p class="text-xs text-slate-500 mt-4">Nhấn để mở thiệp và khám phá thông tin buổi lễ</p>
+        </div>
+    </div>
+
+    <!-- Main Website Content -->
+    <div id="main-content" class="opacity-0 transition-opacity duration-1000 hidden">
+        
+        <!-- Header Banner / Hero Section -->
+        <header class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-b border-gold/10">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#c5a880_1px,transparent_1px)] [background-size:24px_24px]"></div>
+            
+            <div class="relative z-10 max-w-3xl mx-auto space-y-6 flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/40 bg-gold/10 text-gold text-sm tracking-wide">
+                    <i class="fa-solid fa-award"></i> Cử Nhân Khoa Học Máy Tính
+                </div>
+                
+                <!-- Dán link ảnh avatar cố định vào thuộc tính src bên dưới -->
+                <div class="relative group my-2">
+                    <div class="absolute -inset-1.5 bg-gradient-to-r from-gold-600 via-gold-400 to-amber-600 rounded-full blur opacity-70 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+                    <div class="relative w-36 h-36 md:w-44 md:h-44 rounded-full border-4 border-slate-900 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center">
+                        <img id="graduate-avatar" src="https://i.ibb.co/Kz0cFnyS/9e6a5b03-63bb-46ed-9ba5-084c255c2159.png" alt="Ảnh tốt nghiệp của Nguyễn Trọng Trường" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/400x400/1e293b/c5a880?text=Anh+Cu+Nhan'">
+                    </div>
+                </div>
+
+                <h1 class="font-serif text-5xl md:text-7xl font-bold tracking-tight text-white">
+                    Nguyễn Trọng Trường
+                </h1>
+                
+                <p class="font-serif italic text-2xl text-gold-400">
+                    Trường Đại học Bách Khoa – ĐHQG TP.HCM
+                </p>
+                
+                <p class="text-slate-300 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
+                    Đánh dấu cột mốc quan trọng sau 4 năm nỗ lực không ngừng nghỉ. Sự hiện diện và lời chúc của bạn là niềm vinh hạnh lớn nhất đối với mình và gia đình.
+                </p>
+
+                <!-- Countdown Timer -->
+                <div class="grid grid-cols-4 gap-3 max-w-md mx-auto pt-4">
+                    <div class="bg-slate-800/80 border border-gold/20 p-3 rounded-2xl backdrop-blur">
+                        <span id="days" class="font-serif text-2xl md:text-3xl font-bold text-gold-400 block">00</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Ngày</span>
+                    </div>
+                    <div class="bg-slate-800/80 border border-gold/20 p-3 rounded-2xl backdrop-blur">
+                        <span id="hours" class="font-serif text-2xl md:text-3xl font-bold text-gold-400 block">00</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Giờ</span>
+                    </div>
+                    <div class="bg-slate-800/80 border border-gold/20 p-3 rounded-2xl backdrop-blur">
+                        <span id="minutes" class="font-serif text-2xl md:text-3xl font-bold text-gold-400 block">00</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Phút</span>
+                    </div>
+                    <div class="bg-slate-800/80 border border-gold/20 p-3 rounded-2xl backdrop-blur">
+                        <span id="seconds" class="font-serif text-2xl md:text-3xl font-bold text-gold-400 block">00</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Giây</span>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <a href="#details" class="inline-flex items-center gap-2 text-gold hover:text-white transition-colors text-sm uppercase tracking-widest font-semibold">
+                        Xem thông tin chi tiết <i class="fa-solid fa-arrow-down animate-bounce"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chi Tiết Buổi Lễ & Sơ Đồ Vị Trí -->
+        <section id="details" class="py-20 px-4 max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-gold uppercase tracking-widest text-xs font-semibold">Thông Tin Quan Trọng</p>
+                <h2 class="font-serif text-4xl font-bold mt-2 text-white">Chương Trình Lễ Tốt Nghiệp & Sơ Đồ</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                <!-- Info Card -->
+                <div class="bg-slate-900/80 border border-gold/20 rounded-3xl p-8 backdrop-blur flex flex-col justify-between shadow-xl">
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm text-slate-400 uppercase">Thời Gian</h3>
+                                <p class="text-lg font-semibold text-white mt-1">Thứ Bảy, ngày 28 tháng 11, 2026</p>
+                                <p class="text-gold-400 text-sm mt-0.5">14:30 - 17:30</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm text-slate-400 uppercase">Địa Điểm</h3>
+                                <p class="text-lg font-semibold text-white mt-1">Hội trường A5, Trường ĐH Bách Khoa</p>
+                                <p class="text-slate-300 text-sm mt-0.5">268 Lý Thường Kiệt, Phường 14, Quận 10, TP.HCM</p>
+                                <p class="text-slate-300 text-sm mt-0.5">Mọi người có thể gửi xe ở cổng 1 (Lý Thường Kiệt) hoặc cổng 3 (Tô Hiến Thành) nhé!</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold text-xl flex-shrink-0">
+                                <i class="fa-solid fa-shirt"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm text-slate-400 uppercase">Trang Phục Gợi Ý</h3>
+                                <p class="text-lg font-semibold text-white mt-1">Lịch sự, trang nhã</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-4">
+                        <a href="https://maps.google.com/?q=268+Ly+Thuong+Kiet+Quan+10+TPHCM" target="_blank" class="flex-1 py-3 px-4 bg-gold/20 hover:bg-gold/30 border border-gold/40 text-gold font-semibold rounded-xl text-center transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-map-location-dot"></i> Mở Google Maps
+                        </a>
+                        <a href="https://share.google/f2QvMQldGuFx6HCX8" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 px-4 bg-gold/20 hover:bg-gold/30 border border-gold/40 text-gold font-semibold rounded-xl text-center transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-utensils"></i> Mở link quán ăn
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Sơ Đồ Vị Trí Card -->
+                <div class="bg-slate-900/80 border border-gold/20 rounded-3xl p-4 backdrop-blur overflow-hidden flex flex-col justify-between shadow-xl">
+                    <div class="text-center pb-2">
+                        <span class="px-3 py-1 bg-gold/20 border border-gold/40 text-gold text-xs rounded-full uppercase">Sơ đồ khu vực Trường ĐH Bách Khoa</span>
+                    </div>
+                    <div class="relative w-full rounded-2xl overflow-hidden border border-gold/20 bg-slate-950 my-2 group">
+                        <img src="https://meeymap.com/tin-tuc/wp-content/uploads/2024/05/Ban-do-Bach-Khoa-HCM.jpg" alt="Sơ đồ vị trí Đại học Bách Khoa" class="w-full h-auto object-contain max-h-[340px] mx-auto transition-transform duration-300 group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/1e293b/c5a880?text=So+Do+Vi+Tri'">
+                    </div>
+                    <p class="text-xs text-slate-400 text-center mt-1">Khu vực tổ chức lễ tại Hội trường A5 và các khu vực lân cận.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lịch Trình Sự Kiện (Timeline) -->
+        <section class="py-20 px-4 max-w-4xl mx-auto border-t border-gold/10">
+            <div class="text-center mb-16">
+                <p class="text-gold uppercase tracking-widest text-xs font-semibold">Lịch Trình Chi Tiết</p>
+                <h2 class="font-serif text-4xl font-bold mt-2 text-white">Chương Trình Buổi Lễ</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <div class="relative border-l-2 border-gold/30 ml-4 md:ml-32 space-y-12">
+                
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-slate-900 border-2 border-gold flex items-center justify-center text-gold text-xs shadow">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <span class="text-gold font-semibold text-sm">14:30 - 17:30</span>
+                    <h3 class="font-serif text-2xl font-bold text-white mt-1">Lễ Tốt Nghiệp</h3>
+                </div>
+
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-slate-900 border-2 border-gold flex items-center justify-center text-gold text-xs shadow">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <span class="text-gold font-semibold text-sm">17:30 - 18:00</span>
+                    <h3 class="font-serif text-2xl font-bold text-white mt-1">Chụp Ảnh Kỷ Niệm</h3>
+                </div>
+
+                <div class="relative pl-8 md:pl-12">
+                    <div class="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-slate-900 border-2 border-gold flex items-center justify-center text-gold text-xs shadow">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="text-gold font-semibold text-sm">18:00</span>
+                    <h3 class="font-serif text-2xl font-bold text-white mt-1">Tiệc Thân Mật</h3>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Bộ Sưu Tập Ảnh (Photo Gallery) -->
+        <section class="py-20 px-4 max-w-6xl mx-auto border-t border-gold/10">
+            <div class="text-center mb-16">
+                <p class="text-gold uppercase tracking-widest text-xs font-semibold">Khoảnh Khắc Đẹp</p>
+                <h2 class="font-serif text-4xl font-bold mt-2 text-white">Hành Trình Thanh Xuân</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <div class="max-w-5xl mx-auto rounded-3xl border border-gold/20 bg-slate-900/60 p-4 md:p-6 shadow-lg">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/6RT8RS46/FB-IMG-1679402145966.jpg" alt="Ảnh kỷ niệm 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/3mjWW4bp/IMG-20230918-115618.jpg" alt="Ảnh kỷ niệm 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/JRKrvjmL/FB-IMG-1689811575655.jpg" alt="Ảnh kỷ niệm 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/rGsSbpyv/FB-IMG-1688994492937.jpg" alt="Ảnh kỷ niệm 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/kgMy6hZq/FB-IMG-1688563443126.jpg" alt="Ảnh kỷ niệm 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                
+                    <div class="group relative rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3]">
+                        <img src="https://i.ibb.co/qYkVCX74/image.png" alt="Ảnh kỷ niệm 7" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <p class="text-gold-400 text-xs uppercase tracking-widest font-semibold mb-2">Album duy nhất</p>
+                    <p class="text-white font-serif text-2xl md:text-3xl">Thời Sinh Viên</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sổ Lưu Bút / Gửi Lời Chúc (Guestbook) -->
+        <section class="py-20 px-4 max-w-4xl mx-auto border-t border-gold/10">
+            <div class="text-center mb-16">
+                <p class="text-gold uppercase tracking-widest text-xs font-semibold">Sổ Lưu Bút</p>
+                <h2 class="font-serif text-4xl font-bold mt-2 text-white">Gửi Lời Chúc Đến Cử Nhân</h2>
+                <div class="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <!-- Form gửi lời chúc -->
+            <div class="bg-slate-900/80 border border-gold/20 rounded-3xl p-6 md:p-8 backdrop-blur shadow-2xl mb-12">
+                <form id="guestbook-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Tên của bạn / Biệt danh</label>
+                        <input type="text" id="sender-name" required placeholder="Nhập tên của bạn..." class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-gold text-white placeholder-slate-600 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Lời chúc tốt nghiệp</label>
+                        <textarea id="sender-message" required rows="3" placeholder="Chúc bạn gặt hái được nhiều thành công trên con đường sắp tới..." class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-gold text-white placeholder-slate-600 text-sm resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-gold hover:bg-gold-500 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Gửi Lời Chúc
+                    </button>
+                </form>
+            </div>
+
+            <!-- Danh sách lời chúc thực tế đã gửi -->
+            <div class="space-y-4" id="wishes-container">
+                <!-- Lời chúc sẽ xuất hiện sau khi được gửi -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 text-center border-t border-gold/10 bg-slate-950 text-slate-400 text-sm">
+            <div class="max-w-xl mx-auto px-4 space-y-3">
+                <p class="font-serif text-xl text-gold">Chân thành cảm ơn bạn đã đồng hành!</p>
+                <p class="text-xs text-slate-500">© 2026 Nguyễn Trọng Trường. Graduation Invitation Design with Love.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Custom Modal for Alerts (No native alert) -->
+    <div id="custom-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-gold/40 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <div id="modal-icon" class="w-12 h-12 mx-auto mb-4 rounded-full bg-gold/20 flex items-center justify-center text-gold text-xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="modal-title" class="font-serif text-2xl font-bold text-white mb-2">Thành công</h3>
+            <p id="modal-message" class="text-slate-300 text-sm mb-6">Lời chúc của bạn đã được gửi thành công!</p>
+            <button id="modal-close-btn" class="w-full py-2.5 bg-gold hover:bg-gold-500 text-slate-950 font-bold rounded-xl text-sm transition-all">
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Countdown Timer Logic
+        const graduationDate = new Date('2026-11-28T14:30:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = graduationDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').innerText = '00';
+                document.getElementById('hours').innerText = '00';
+                document.getElementById('minutes').innerText = '00';
+                document.getElementById('seconds').innerText = '00';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Custom Modal helper
+        function showModal(title, message, isSuccess = true) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            const iconEl = document.getElementById('modal-icon');
+            if (isSuccess) {
+                iconEl.className = "w-12 h-12 mx-auto mb-4 rounded-full bg-gold/20 flex items-center justify-center text-gold text-xl";
+                iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                iconEl.className = "w-12 h-12 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-xl";
+                iconEl.innerHTML = '<i class="fa-solid fa-exclamation"></i>';
+            }
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        document.getElementById('modal-close-btn').addEventListener('click', () => {
+            document.getElementById('custom-modal').classList.add('hidden');
+        });
+
+        // Open Invitation Envelope screen
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestParam = urlParams.get('to');
+        if (guestParam) {
+            document.getElementById('guest-name-display').innerText = decodeURIComponent(guestParam);
+        }
+
+        document.getElementById('open-btn').addEventListener('click', () => {
+            const cover = document.getElementById('cover-screen');
+            const main = document.getElementById('main-content');
+            
+            cover.classList.add('opacity-0');
+            setTimeout(() => {
+                cover.style.display = 'none';
+                main.classList.remove('hidden');
+                setTimeout(() => {
+                    main.classList.remove('opacity-0');
+                }, 50);
+            }, 1000);
+        });
+
+        // Web Audio API Synthesized Gentle BGM
+        let audioCtx = null;
+        let isPlaying = false;
+        let melodyInterval = null;
+
+        function startBGM() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Simple pleasant chord progression (Cmaj7, Am7, Fmaj7, G7)
+            const notes = [261.63, 329.63, 392.00, 493.88, 523.25]; // C4, E4, G4, B4, C5
+            let index = 0;
+
+            isPlaying = true;
+            document.getElementById('music-status').innerText = "Nhạc nền: Đang phát";
+            document.getElementById('music-icon').classList.add('fa-spin');
+
+            melodyInterval = setInterval(() => {
+                if (!isPlaying) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(notes[Math.floor(Math.random() * notes.length)], audioCtx.currentTime);
+
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 2.5);
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 1500);
+        }
+
+        function stopBGM() {
+            isPlaying = false;
+            if (melodyInterval) clearInterval(melodyInterval);
+            document.getElementById('music-status').innerText = "Nhạc nền: Tắt";
+            document.getElementById('music-icon').classList.remove('fa-spin');
+        }
+
+        document.getElementById('music-toggle').addEventListener('click', () => {
+            if (isPlaying) {
+                stopBGM();
+            } else {
+                startBGM();
+            }
+        });
+
+        function getStoredWishes() {
+            const stored = localStorage.getItem('grad_wishes_v1');
+            if (!stored) return [];
+
+            try {
+                const wishes = JSON.parse(stored);
+                if (!Array.isArray(wishes)) throw new Error('Dữ liệu lời chúc không hợp lệ.');
+                return wishes;
+            } catch (error) {
+                console.error('Không thể đọc sổ lời chúc:', error);
+                return [];
+            }
+        }
+
+        function saveStoredWishes(wishes) {
+            localStorage.setItem('grad_wishes_v1', JSON.stringify(wishes));
+        }
+
+        function renderWishes() {
+            const container = document.getElementById('wishes-container');
+            const wishes = getStoredWishes();
+            
+            container.innerHTML = '';
+            if (wishes.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500 text-sm py-4">Chưa có lời chúc nào. Hãy là người đầu tiên gửi lời chúc!</p>';
+                return;
+            }
+
+            wishes.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900/60 border border-gold/10 p-5 rounded-2xl backdrop-blur shadow";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-gold-400 text-sm"><i class="fa-solid fa-user-circle mr-1.5"></i>${escapeHtml(item.name)}</h4>
+                        <span class="text-xs text-slate-500">${escapeHtml(item.time)}</span>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">${escapeHtml(item.message)}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        document.getElementById('guestbook-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('sender-name').value.trim();
+            const message = document.getElementById('sender-message').value.trim();
+
+            if (!name || !message) return;
+
+            const wishes = getStoredWishes();
+            wishes.unshift({
+                name: name,
+                message: message,
+                time: new Date().toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            });
+
+            saveStoredWishes(wishes);
+            renderWishes();
+
+            document.getElementById('sender-name').value = '';
+            document.getElementById('sender-message').value = '';
+
+            showModal("Gửi thành công!", "Cảm ơn lời chúc ý nghĩa của bạn dành cho tân cử nhân!");
+        });
+
+        // Initial render
+        renderWishes();
+    </script>
+</body>
+</html>
