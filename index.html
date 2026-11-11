@@ -72,7 +72,8 @@
 </head>
 <body class="antialiased min-h-screen relative">
 
-    <!-- Background Audio (Synthesized ambient music via Web Audio API) -->
+    <!-- Background Audio -->
+    <audio id="background-audio" preload="auto" src="thanh-xuan.mp3"></audio>
     <div id="audio-controller" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-gold/40 text-gold px-4 py-2.5 rounded-full shadow-2xl transition-all hover:border-gold">
         <button id="music-toggle" class="focus:outline-none flex items-center gap-2 text-sm font-medium">
             <i id="music-icon" class="fa-solid fa-music animate-spin text-gold-400"></i>
@@ -432,6 +433,8 @@
         document.getElementById('open-btn').addEventListener('click', () => {
             const cover = document.getElementById('cover-screen');
             const main = document.getElementById('main-content');
+
+            startBGM();
             
             cover.classList.add('opacity-0');
             setTimeout(() => {
@@ -443,55 +446,30 @@
             }, 1000);
         });
 
-        // Web Audio API Synthesized Gentle BGM
-        let audioCtx = null;
+        // Local background music starts at the chorus.
+        const backgroundAudio = document.getElementById('background-audio');
         let isPlaying = false;
-        let melodyInterval = null;
+
+        function updateMusicStatus(playing) {
+            isPlaying = playing;
+            document.getElementById('music-status').innerText = playing ? "Nhạc nền: Đang phát" : "Nhạc nền: Tắt";
+            document.getElementById('music-icon').classList.toggle('fa-spin', playing);
+        }
 
         function startBGM() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            // Simple pleasant chord progression (Cmaj7, Am7, Fmaj7, G7)
-            const notes = [261.63, 329.63, 392.00, 493.88, 523.25]; // C4, E4, G4, B4, C5
-            let index = 0;
-
-            isPlaying = true;
-            document.getElementById('music-status').innerText = "Nhạc nền: Đang phát";
-            document.getElementById('music-icon').classList.add('fa-spin');
-
-            melodyInterval = setInterval(() => {
-                if (!isPlaying) return;
-                try {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(notes[Math.floor(Math.random() * notes.length)], audioCtx.currentTime);
-
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 2.5);
-                } catch (e) {
-                    console.error(e);
-                }
-            }, 1500);
+            backgroundAudio.currentTime = 63;
+            backgroundAudio.volume = 1;
+            backgroundAudio.play()
+                .then(() => updateMusicStatus(true))
+                .catch((error) => {
+                    console.error('Không thể phát nhạc nền:', error);
+                    updateMusicStatus(false);
+                });
         }
 
         function stopBGM() {
-            isPlaying = false;
-            if (melodyInterval) clearInterval(melodyInterval);
-            document.getElementById('music-status').innerText = "Nhạc nền: Tắt";
-            document.getElementById('music-icon').classList.remove('fa-spin');
+            backgroundAudio.pause();
+            updateMusicStatus(false);
         }
 
         document.getElementById('music-toggle').addEventListener('click', () => {
